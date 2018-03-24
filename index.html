@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Commander's Screen</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.6/"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="index.js"></script>
+    <script>
+        require([
+            "esri/views/SceneView",
+            "esri/widgets/LayerList",
+            "esri/WebScene",
+            "esri/layers/GraphicsLayer",
+            "esri/Graphic",
+            "dojo/domReady!"
+        ], function(
+            SceneView, LayerList, WebScene, GraphicsLayer, Graphic
+        ) {
+
+            // CREATE WEBSCENE
+            var scene = new WebScene({
+                portalItem: { // autocasts as new PortalItem()
+                    id: "65f45cdfd7a04dbb9b0863880fe8c921"
+                }
+            });
+
+            var view = new SceneView({
+                container: "viewDiv",
+                map: scene
+            });
+
+
+            // RETRIEVE COORDINATES / MODIFY POPUP
+            view.on("click", function(event) {
+                event.stopPropagation();
+                // Get the coordinates of the click on the view
+                // around the decimals to 3 decimals
+                view.popup.open({
+                    // Set the popup's title to the coordinates of the clicked location
+                    title: event.mapPoint["z"],
+                    location: event.mapPoint // Set the location of the popup to the clicked location
+                });
+            });
+
+            // DISPLAY A POINT
+            var graphicsLayer = new GraphicsLayer();
+            scene.add(graphicsLayer);
+
+            var fcolor = [0, 225, 0, 0.75]; //green pts for firefighters
+            var vcolor = [225, 225, 0, 0.75]; //yellow pt for victim
+            var critvcolor = [225, 0, 0, 0.75]; //red pt for victims in critical condition
+
+            // firefighters
+            var ffpoint = {
+              type: "point", // autocasts as new Point()
+              latitude: 34.056025,
+              longitude: -117.195750,
+              z: 6
+            };
+            markerSymbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              color: fcolor
+            };
+
+            var ffpointGraphic = new Graphic({
+              geometry: ffpoint,
+              symbol: markerSymbol
+            });
+
+            graphicsLayer.add(ffpointGraphic);
+
+            // victims
+            var vpoint = {
+              type: "point", // autocasts as new Point()
+              latitude: 34.056025,
+              longitude: -117.195751,
+              z: 1
+            };
+            markerSymbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              color: vcolor
+            };
+            var vpointGraphic = new Graphic({
+              geometry: vpoint,
+              symbol: markerSymbol
+            });
+            graphicsLayer.add(vpointGraphic);
+
+            view.when(function() {
+                var layerList = new LayerList({
+                    view: view
+                });
+
+                // Add widget to the top right corner of the view
+                view.ui.add(layerList, "top-right");
+            });
+        });
+    </script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #titleDiv {
+            background-color: lightgray;
+            color: black;
+            padding: 5px;
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            right: 0;
+            font-size: 20pt;
+            font-weight: bolder;
+            width: 100%;
+            height: 30px;
+            text-align: center;
+            opacity: 0.75;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="viewDiv">
+        <div id="titleDiv"></div>
+    </div>
+</body>
+
+</html>
