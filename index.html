@@ -17,7 +17,8 @@
             "esri/WebScene",
             "esri/layers/GraphicsLayer",
             "esri/Graphic",
-            "dojo/domReady!"
+            "dojo/domReady!",
+            "esri/PopupTemplate"
         ], function(
             SceneView, LayerList, WebScene, GraphicsLayer, Graphic
         ) {
@@ -25,7 +26,7 @@
             // CREATE WEBSCENE
             var scene = new WebScene({
                 portalItem: { // autocasts as new PortalItem()
-                    id: "65f45cdfd7a04dbb9b0863880fe8c921"
+                    id: "96e6fa021c2c4e89b9cb08d2da4ba1cf"
                 }
             });
 
@@ -34,12 +35,29 @@
                 map: scene
             });
 
+            view.then(function() {
+                    // SceneView is now ready for display and can be used. Here we will
+                    // use goTo to view a particular location at a given zoom level, camera
+                    // heading and tilt.
+                    view.goTo({
+                        center: [-117.19567374569843, 34.056143337645516],
+                        zoom: 20,
+                        heading: 30,
+                        tilt: 60
+                    })
+                })
+                .otherwise(function(err) {
+                    // A rejected view indicates a fatal error making it unable to display,
+                    // this usually means that WebGL is not available, or too old.
+                    console.error("SceneView rejected:", err);
+                });
 
             // RETRIEVE COORDINATES / MODIFY POPUP
             view.on("click", function(event) {
                 event.stopPropagation();
                 // Get the coordinates of the click on the view
                 // around the decimals to 3 decimals
+                console.log(event.mapPoint)
                 view.popup.open({
                     // Set the popup's title to the coordinates of the clicked location
                     title: event.mapPoint["z"],
@@ -47,58 +65,192 @@
                 });
             });
 
-            // DISPLAY A POINT
-            var graphicsLayer = new GraphicsLayer();
-            scene.add(graphicsLayer);
-
-            var fcolor = [0, 225, 0, 0.75]; //green pts for firefighters
-            var vcolor = [225, 225, 0, 0.75]; //yellow pt for victim
-            var critvcolor = [225, 0, 0, 0.75]; //red pt for victims in critical condition
-
-            // firefighters
-            var ffpoint = {
-              type: "point", // autocasts as new Point()
-              latitude: 34.056025,
-              longitude: -117.195750,
-              z: 6
-            };
-            markerSymbol = {
-              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-              color: fcolor
-            };
-
-            var ffpointGraphic = new Graphic({
-              geometry: ffpoint,
-              symbol: markerSymbol
+            //PEOPLE ONSITE - GRAPHIC POINTS
+            var ffgraphicsLayer = new GraphicsLayer({
+                title: "Firefighters"
             });
+            scene.add(ffgraphicsLayer);
 
-            graphicsLayer.add(ffpointGraphic);
-
-            // victims
-            var vpoint = {
-              type: "point", // autocasts as new Point()
-              latitude: 34.056025,
-              longitude: -117.195751,
-              z: 1
-            };
-            markerSymbol = {
-              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-              color: vcolor
-            };
-            var vpointGraphic = new Graphic({
-              geometry: vpoint,
-              symbol: markerSymbol
+            var vgraphicsLayer = new GraphicsLayer({
+                title: "Victims"
             });
-            graphicsLayer.add(vpointGraphic);
+            scene.add(vgraphicsLayer);
 
+            //display layerlist
             view.when(function() {
                 var layerList = new LayerList({
                     view: view
                 });
-
                 // Add widget to the top right corner of the view
                 view.ui.add(layerList, "top-right");
             });
+
+            //z-axis parameters - z-axis units
+            var human_height = 2.38;
+            var level_height = 4.777;
+
+            //LEGEND COLOR
+            var fcolor = [0, 225, 0, 0.75]; //green pts for firefighters
+            var vcolor = [225, 225, 0, 0.75]; //yellow pt for victim
+            var critvcolor = [225, 0, 0, 0.75]; //red pt for victims in critical condition
+
+            // victim 1 & 2
+            var vpoint1 = {
+                type: "point", // autocasts as new Point()
+                latitude: 34.05607,
+                longitude: -117.19583,
+                z: 7
+            };
+            markerSymbol = {
+                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                color: critvcolor
+            };
+            var vpointGraphic1 = new Graphic({
+                geometry: vpoint1,
+                symbol: markerSymbol
+            });
+            vgraphicsLayer.add(vpointGraphic1);
+
+            var vpoint2 = {
+                type: "point", // autocasts as new Point()
+                latitude: 34.05607,
+                longitude: -117.19591,
+                z: 11.5
+            };
+            markerSymbol = {
+                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                color: vcolor
+            };
+            var vpointGraphic2 = new Graphic({
+                geometry: vpoint2,
+                symbol: markerSymbol
+            });
+            vgraphicsLayer.add(vpointGraphic2);
+
+            //FIREFIGHTER
+            //*retrieve elevation data from Samsung Gear
+            //level = elevation / level_height
+            var fLvl = 1;
+            //*retrieve latitude and longitude from Samsung Gear
+            var fLat = 34.056025;
+            var fLong = -117.195750;
+            /*
+            var fLat = [34.056166050304356, 34.05604351028498, 34.0560324451615]
+            var fLong = [-117.19569956078443, -117.1957325361164, -117.19569938406546]
+            */
+            // firefighters
+            function f(lvl, lat, long) {
+                var ffpoint = {
+                    type: "point", // autocasts as new Point()
+                    latitude: lat,
+                    longitude: long,
+                    z: human_height + (lvl - 1) * level_height
+                };
+                markerSymbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    color: fcolor
+                };
+                var ffpointGraphic = new Graphic({
+                    geometry: ffpoint,
+                    symbol: markerSymbol
+                });
+                ffpoint["z"] += 1.5
+                var ffpointText = new Graphic({
+                    geometry: ffpoint,
+                    symbol: {
+                        type: "text",
+                        text: "#01"
+                    }
+                });
+                ffpoint["z"] -= 1.5
+
+                ffgraphicsLayer.add(ffpointGraphic);
+                ffgraphicsLayer.add(ffpointText);
+
+                var deleteold = setTimeout(del_f, 499);
+
+                function del_f() {
+                    ffgraphicsLayer.remove(ffpointGraphic);
+                    ffgraphicsLayer.remove(ffpointText);
+                }
+            }
+
+            var vpoint2_changed = {
+                type: "point", // autocasts as new Point()
+                latitude: 34.05607,
+                longitude: -117.19591,
+                z: 11.5
+            };
+            markerSymbol = {
+                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                color: critvcolor
+            };
+            var vpointGraphic2_changed = new Graphic({
+                geometry: vpoint2_changed,
+                symbol: markerSymbol
+            });
+
+            // monitoring the health condition of the victim
+            function v_change_health() {
+
+                vgraphicsLayer.remove(vpointGraphic2);
+                vgraphicsLayer.add(vpointGraphic2_changed);
+            }
+
+            var health_change = setInterval(v_change_health, 20500);
+
+            //refresh firefighter position every second
+
+            var update = setInterval(fmovement1, 500);
+            var steps1 = [false, false, false, false, false, false]
+
+            function fmovement1() {
+                if (!steps1[0]){
+                    fLat = fLat + 0.000002;
+                    f(fLvl, fLat, fLong);
+                    if (fLat > 34.05605633804347){
+                        steps1[0] = true;
+                    }
+                } else if (!steps1[1]) {
+                    fLvl = fLvl + 0.05;
+                    f(fLvl, fLat, fLong);
+                    if (fLvl > 1.90) {
+                        steps1[1] = true;
+                    }
+                } else if (!steps1[2]) {
+                    fLong = fLong + -0.00002;
+                    f(fLvl, fLat, fLong);
+                    if (fLong < -117.19582414483669){
+                        steps1[2] = true;
+                        vgraphicsLayer.remove(vpointGraphic1); // save the first victim
+                    }
+                } else if (!steps1[3]) {
+                    fLong = fLong + 0.00002;
+                    f(fLvl, fLat, fLong);
+                    if (fLong > -117.195750){
+                        steps[3] = true;
+                    }
+                } else if (!steps1[4]) {
+                    fLvl = fLvl + 0.05;
+                    f(fLvl, fLat, fLong);
+                    if (fLvl > 2.90) {
+                        steps[4] = true;
+                    }
+                } else if (!steps1[5]) {
+                    fLong = fLong - 0.00002;
+                    console.log(fLong);
+                    f(fLvl, fLat, fLong);
+                    if (fLong < -117.19589000000005) {
+                        steps[5] = true;
+                        vgraphicsLayer.remove(vpointGraphic2_changed); // save the second victim
+                        clearInterval(health_change);
+                    }
+
+                }
+            }
+
+
+
         });
     </script>
 
@@ -127,6 +279,39 @@
             text-align: center;
             opacity: 0.75;
         }
+
+        .progress {
+            position: fixed;
+            right: 50px;
+            top: 500px;
+            background-color: white;
+            border: 1px solid black;
+            padding: 10px 30px 10px 10px;
+        }
+
+        progress {
+            margin: auto;
+            -webkit-appearance: none;
+        }
+
+        ::-webkit-progress-bar {
+            border: 1px solid black;
+            background-color: white;
+            color: red;
+        }
+
+        ::-webkit-progress-value {
+            background-image: -webkit-linear-gradient(-45deg,
+            transparent 33%, rgba(0, 0, 0, .1) 33%,
+            rgba(0, 0, 0, .1) 66%, transparent 66%),
+            -webkit-linear-gradient(top,
+            rgba(255, 255, 255, .25),
+            rgba(0, 0, 0, .25)),
+            -webkit-linear-gradient(left, #f44, #008000);
+
+            border-radius: 2px;
+            background-size: 35px 20px, 100% 100%, 100% 100%;
+        }
     </style>
 
 </head>
@@ -134,6 +319,13 @@
 <body>
     <div id="viewDiv">
         <div id="titleDiv"></div>
+    </div>
+    <div class="progress">
+        Progress: <br>
+        <progress max="100" value="0"></progress><br>
+        <input class="checkbox" type="checkbox">1st Floor</input><br>
+        <input class="checkbox" type="checkbox">2nd Floor</input><br>
+        <input class="checkbox" type="checkbox">3rd Floor</input>
     </div>
 </body>
 
