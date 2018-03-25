@@ -14,4 +14,8 @@ $(document).ready(function(){
             alert("All floors cleared!");
         }
     });
+
+    $.get("demo_test.asp", function("10.1.103.116/8000", status){
+        alert("Data: " + data + "\nStatus: " + status);
+    });
 })

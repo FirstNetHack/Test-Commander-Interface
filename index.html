@@ -130,10 +130,18 @@
             //FIREFIGHTER
             //*retrieve elevation data from Samsung Gear
             //level = elevation / level_height
-            var fLvl = 1;
+            var fLvl1 = 1;
             //*retrieve latitude and longitude from Samsung Gear
-            var fLat = 34.056025;
-            var fLong = -117.195750;
+            var fLat1 = 34.056102774043914
+            var fLong1 = -117.19569445234714
+            var fLvl2 = 1;
+            //*retrieve latitude and longitude from Samsung Gear
+            var fLat2 = 34.056102774043914
+            var fLong2 = -117.19569445234714
+            var fLvl3 = 1;
+            //*retrieve latitude and longitude from Samsung Gear
+            var fLat3 = 34.056102774043914
+            var fLong3 = -117.19569445234714
             /*
             var fLat = [34.056166050304356, 34.05604351028498, 34.0560324451615]
             var fLong = [-117.19569956078443, -117.1957325361164, -117.19569938406546]
@@ -154,7 +162,7 @@
                     geometry: ffpoint,
                     symbol: markerSymbol
                 });
-                ffpoint["z"] += 1.5
+                ffpoint["z"] += 1.5;
                 var ffpointText = new Graphic({
                     geometry: ffpoint,
                     symbol: {
@@ -162,7 +170,7 @@
                         text: "#01"
                     }
                 });
-                ffpoint["z"] -= 1.5
+                ffpoint["z"] -= 1.5;
 
                 ffgraphicsLayer.add(ffpointGraphic);
                 ffgraphicsLayer.add(ffpointText);
@@ -175,6 +183,154 @@
                 }
             }
 
+
+            function f2(lvl, lat, long) {
+                var ffpoint = {
+                    type: "point", // autocasts as new Point()
+                    latitude: lat,
+                    longitude: long,
+                    z: human_height + (lvl - 1) * level_height
+                };
+                markerSymbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    color: fcolor
+                };
+                var ffpointGraphic = new Graphic({
+                    geometry: ffpoint,
+                    symbol: markerSymbol
+                });
+                ffpoint["z"] += 1.5;
+                var ffpointText = new Graphic({
+                    geometry: ffpoint,
+                    symbol: {
+                        type: "text",
+                        text: "#02"
+                    }
+                });
+                ffpoint["z"] -= 1.5;
+
+                ffgraphicsLayer.add(ffpointGraphic);
+                ffgraphicsLayer.add(ffpointText);
+
+                var deleteold = setTimeout(del_f, 499);
+
+                function del_f() {
+                    ffgraphicsLayer.remove(ffpointGraphic);
+                    ffgraphicsLayer.remove(ffpointText);
+                }
+            }
+
+            function f3(lvl, lat, long) {
+                var ffpoint = {
+                    type: "point", // autocasts as new Point()
+                    latitude: lat,
+                    longitude: long,
+                    z: human_height + (lvl - 1) * level_height
+                };
+                markerSymbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    color: fcolor
+                };
+                var ffpointGraphic = new Graphic({
+                    geometry: ffpoint,
+                    symbol: markerSymbol
+                });
+                ffpoint["z"] += 1.5;
+                var ffpointText = new Graphic({
+                    geometry: ffpoint,
+                    symbol: {
+                        type: "text",
+                        text: "#03"
+                    }
+                });
+                ffpoint["z"] -= 1.5;
+
+                ffgraphicsLayer.add(ffpointGraphic);
+                ffgraphicsLayer.add(ffpointText);
+
+                var deleteold = setTimeout(del_f, 499);
+
+                function del_f() {
+                    ffgraphicsLayer.remove(ffpointGraphic);
+                    ffgraphicsLayer.remove(ffpointText);
+                }
+            }
+
+            function f3_change_v(lvl, lat, long) {
+                var ffpoint = {
+                    type: "point", // autocasts as new Point()
+                    latitude: lat,
+                    longitude: long,
+                    z: human_height + (lvl - 1) * level_height
+                };
+                markerSymbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    color: vcolor
+                };
+                var ffpointGraphic = new Graphic({
+                    geometry: ffpoint,
+                    symbol: markerSymbol
+                });
+                ffpoint["z"] += 1.5;
+                var ffpointText = new Graphic({
+                    geometry: ffpoint,
+                    symbol: {
+                        type: "text",
+                        text: "#03"
+                    }
+                });
+                ffpoint["z"] -= 1.5;
+
+                ffgraphicsLayer.add(ffpointGraphic);
+                ffgraphicsLayer.add(ffpointText);
+
+                var deleteold = setTimeout(del_f, 499);
+
+                function del_f() {
+                    ffgraphicsLayer.remove(ffpointGraphic);
+                    ffgraphicsLayer.remove(ffpointText);
+                }
+            }
+
+            function f3_change_crit(lvl, lat, long) {
+                var ffpoint = {
+                    type: "point", // autocasts as new Point()
+                    latitude: lat,
+                    longitude: long,
+                    z: human_height + (lvl - 1) * level_height
+                };
+                markerSymbol = {
+                    type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                    color: critvcolor
+                };
+                var ffpointGraphic = new Graphic({
+                    geometry: ffpoint,
+                    symbol: markerSymbol
+                });
+                ffpoint["z"] += 1.5;
+                var ffpointText = new Graphic({
+                    geometry: ffpoint,
+                    symbol: {
+                        type: "text",
+                        text: "#03"
+                    }
+                });
+                ffpoint["z"] -= 1.5;
+
+                ffgraphicsLayer.add(ffpointGraphic);
+                ffgraphicsLayer.add(ffpointText);
+
+                var deleteold = setTimeout(del_f, 499);
+
+                function del_f() {
+                    ffgraphicsLayer.remove(ffpointGraphic);
+                    ffgraphicsLayer.remove(ffpointText);
+                }
+            }
+
+
+
+            // monitoring the health condition of the victim
             var vpoint2_changed = {
                 type: "point", // autocasts as new Point()
                 latitude: 34.05607,
@@ -190,7 +346,6 @@
                 symbol: markerSymbol
             });
 
-            // monitoring the health condition of the victim
             function v_change_health() {
 
                 vgraphicsLayer.remove(vpointGraphic2);
@@ -201,52 +356,87 @@
 
             //refresh firefighter position every second
 
-            var update = setInterval(fmovement1, 500);
+            var update = setInterval(fmovement, 500);
             var steps1 = [false, false, false, false, false, false]
 
-            function fmovement1() {
+            var steps2 = [false, false, false, false]
+            var steps3 = [false, false, false, false]
+
+            function fmovement() {
                 if (!steps1[0]){
-                    fLat = fLat + 0.000002;
-                    f(fLvl, fLat, fLong);
-                    if (fLat > 34.05605633804347){
+                    fLat1 = fLat1 + 0.000001;
+                    f(fLvl1, fLat1, fLong1);
+                    if (fLat1 > 34.05605633804347){
                         steps1[0] = true;
                     }
                 } else if (!steps1[1]) {
-                    fLvl = fLvl + 0.05;
-                    f(fLvl, fLat, fLong);
-                    if (fLvl > 1.90) {
+                    fLvl1 = fLvl1 + 0.05;
+                    f(fLvl1, fLat1, fLong1);
+                    if (fLvl1 > 1.90) {
                         steps1[1] = true;
                     }
                 } else if (!steps1[2]) {
-                    fLong = fLong + -0.00002;
-                    f(fLvl, fLat, fLong);
-                    if (fLong < -117.19582414483669){
+                    fLong1 = fLong1 + -0.00002;
+                    f(fLvl1, fLat1, fLong1);
+                    if (fLong1 < -117.19582414483669){
                         steps1[2] = true;
                         vgraphicsLayer.remove(vpointGraphic1); // save the first victim
                     }
                 } else if (!steps1[3]) {
-                    fLong = fLong + 0.00002;
-                    f(fLvl, fLat, fLong);
-                    if (fLong > -117.195750){
-                        steps[3] = true;
+                    fLong1 = fLong1 + 0.00002;
+                    f(fLvl1, fLat1, fLong1);
+                    if (fLong1 > -117.195750){
+                        steps1[3] = true;
                     }
                 } else if (!steps1[4]) {
-                    fLvl = fLvl + 0.05;
-                    f(fLvl, fLat, fLong);
-                    if (fLvl > 2.90) {
-                        steps[4] = true;
+                    fLvl1 = fLvl1 + 0.05;
+                    f(fLvl1, fLat1, fLong1);
+                    if (fLvl1 > 2.90) {
+                        steps1[4] = true;
                     }
                 } else if (!steps1[5]) {
-                    fLong = fLong - 0.00002;
-                    console.log(fLong);
-                    f(fLvl, fLat, fLong);
-                    if (fLong < -117.19589000000005) {
-                        steps[5] = true;
+                    fLong1 = fLong1 - 0.00002;
+                    f(fLvl1, fLat1, fLong1);
+                    if (fLong1 < -117.19589000000005) {
+                        steps1[5] = true;
                         vgraphicsLayer.remove(vpointGraphic2_changed); // save the second victim
                         clearInterval(health_change);
                     }
 
                 }
+
+                if (!steps2[0]){
+                    fLat2 = fLat2 + 0.000001;
+                    fLat3 = fLat3 + 0.000001;
+                    f2(fLvl2, fLat2, fLong2);
+                    f3(fLvl3, fLat3, fLong3);
+                    if (fLat2 > 34.05605633804347){
+                        steps2[0] = true;
+                    }
+                } else if (!steps2[1]) {
+                    fLvl2 = fLvl2 + 0.05;
+                    f2(fLvl2, fLat2, fLong2);
+                    fLong3 = fLong3 - 0.00001;
+                    f3(fLvl3, fLat3, fLong3);
+                    if (fLvl2 > 1.90) {
+                        steps2[1] = true;
+                    }
+                } else if (!steps2[2]) {
+                    fLvl2 = fLvl2 - 0.05;
+                    f2(fLvl2, fLat2, fLong2);
+                    f3_change_v(fLvl3, fLat3, fLong3);
+                    if (fLvl2 <1) {
+                        steps2[2] = true;
+                    }
+                } else if (!steps2[3]) {
+                    fLong2 = fLong2- 0.00001;
+                    f2(fLvl2, fLat2, fLong2);
+                    f3_change_crit(fLvl3, fLat3, fLong3);
+                    if (fLong2 < fLong3) {
+                        steps2[3] = true;
+                    }
+                }
+
             }
 
 
@@ -326,6 +516,7 @@
         <input class="checkbox" type="checkbox">1st Floor</input><br>
         <input class="checkbox" type="checkbox">2nd Floor</input><br>
         <input class="checkbox" type="checkbox">3rd Floor</input>
+
     </div>
 </body>
 
